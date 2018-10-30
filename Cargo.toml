@@ -1,0 +1,18 @@
+[package]
+name = "mklml_ffi"
+version = "0.0.0"
+authors = ["Peter Jin <peterhaijin@gmail.com>"]
+
+[lib]
+name = "mklml_ffi"
+path = "src/lib.rs"
+
+[features]
+default = ["mklml_intel"]
+mklml_gnu = []
+mklml_intel = []
+
+[build-dependencies]
+bindgen = "*"
+
+#[dependencies]
