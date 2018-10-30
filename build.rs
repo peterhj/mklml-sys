@@ -12,6 +12,10 @@ fn main() {
         .unwrap_or_else(|_| "/usr/local".to_string())
   );
 
+  #[cfg(all(feature = "mklml_gnu", feature = "mklml_intel"))] {
+    panic!("enable only one of 'mklml_gnu' or 'mklml_intel'");
+  }
+
   #[cfg(feature = "mklml_gnu")] {
     if cfg!(target_os = "linux") {
       println!("cargo:rustc-link-lib=mklml_gnu");
