@@ -9,16 +9,26 @@ fn main() {
   let mkl_dir = PathBuf::from(
       env::var("MKL_HOME")
         .or_else(|_| env::var("MKLROOT"))
-        .unwrap_or_else(|_| "/usr".to_string())
+        .unwrap_or_else(|_| "/usr/local".to_string())
   );
 
   #[cfg(feature = "mklml_gnu")] {
-    println!("cargo:rustc-link-lib=mklml_gnu");
+    if cfg!(target_os = "linux") {
+      println!("cargo:rustc-link-lib=mklml_gnu");
+    } else {
+      unimplemented!();
+    }
     println!("cargo:rustc-link-lib=gomp");
   }
 
   #[cfg(feature = "mklml_intel")] {
-    println!("cargo:rustc-link-lib=mklml_intel");
+    if cfg!(target_os = "linux") {
+      println!("cargo:rustc-link-lib=mklml_intel");
+    } else if cfg!(target_os = "macos") {
+      println!("cargo:rustc-link-lib=mklml");
+    } else {
+      unimplemented!();
+    }
     println!("cargo:rustc-link-lib=iomp5");
   }
 
