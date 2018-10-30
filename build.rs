@@ -9,7 +9,7 @@ fn main() {
   let mkl_dir = PathBuf::from(
       env::var("MKL_HOME")
         .or_else(|_| env::var("MKLROOT"))
-        .or_else(|_| Ok("/usr".to_owned()))
+        .unwrap_or_else(|_| "/usr".to_string())
   );
 
   #[cfg(feature = "mklml_gnu")] {
