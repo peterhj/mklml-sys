@@ -2,4 +2,6 @@
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
-include!(concat!(env!("OUT_DIR"), "/mkl_bind.rs"));
+pub mod cblas {
+include!("_mkl_cblas.rs");
+}
