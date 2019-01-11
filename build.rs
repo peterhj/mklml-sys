@@ -7,18 +7,19 @@ use std::fs;
 use std::path::{PathBuf};
 
 fn main() {
-  let mkl_dir = PathBuf::from(
-      env::var("MKL_HOME")
-        .or_else(|_| env::var("MKLROOT"))
-        .unwrap_or_else(|_| "/usr/local".to_string())
-  );
-
   #[cfg(all(feature = "mklml_gnu", feature = "mklml_intel"))]
   {
     panic!("enable only one of 'mklml_gnu' or 'mklml_intel'");
   }
 
-  println!("cargo:rustc-link-search=native={}", mkl_dir.join("lib").display());
+  let mkl_dir =
+      env::var("MKL_HOME")
+        .or_else(|_| env::var("MKLROOT"))
+        .ok()
+        .map(|s| PathBuf::from(s));
+  if let Some(ref mkl_dir) = mkl_dir {
+    println!("cargo:rustc-link-search=native={}", mkl_dir.join("lib").display());
+  }
 
   #[cfg(feature = "mklml_gnu")]
   {
@@ -50,8 +51,11 @@ fn main() {
 
     println!("cargo:rerun-if-changed={}", gensrc_dir.join("_mkl_cblas.rs").display());
     fs::remove_file(gensrc_dir.join("_mkl_cblas.rs")).ok();
-    bindgen::Builder::default()
-      .clang_arg(format!("-I{}", mkl_dir.join("include").display()))
+    let mut builder = bindgen::Builder::default();
+    if let Some(ref mkl_dir) = mkl_dir {
+      builder = builder.clang_arg(format!("-I{}", mkl_dir.join("include").display()));
+    }
+    builder
       .header("wrapped_mkl_cblas.h")
       .whitelist_type("CBLAS_LAYOUT")
       .whitelist_type("CBLAS_TRANSPOSE")
