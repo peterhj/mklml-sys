@@ -1,6 +1,6 @@
 [package]
-name = "mklml_ffi"
-version = "0.0.0"
+name = "mklml-sys"
+version = "0.1.0-devel"
 edition = "2018"
 authors = ["Peter Jin <peterhaijin@gmail.com>"]
 

@@ -15,10 +15,13 @@ fn main() {
   let mkl_dir =
       env::var("MKL_HOME")
         .or_else(|_| env::var("MKLROOT"))
-        .ok()
-        .map(|s| PathBuf::from(s));
+        .ok().map(|s| PathBuf::from(s));
   if let Some(ref mkl_dir) = mkl_dir {
-    println!("cargo:rustc-link-search=native={}", mkl_dir.join("lib").display());
+    if cfg!(any(target_os = "linux", target_os = "macos")) {
+      println!("cargo:rustc-link-search=native={}", mkl_dir.join("lib").display());
+    } else {
+      unimplemented!();
+    }
   }
 
   #[cfg(feature = "mklml_gnu")]
